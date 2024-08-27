@@ -1,0 +1,21 @@
+{
+	"name": "superstoresdata",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_Merge",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Excel",
+		"typeProperties": {
+			"sheetName": "240826 Superstore",
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": "240826 Superstore.xlsx",
+				"container": "superstore"
+			},
+			"firstRowAsHeader": true
+		},
+		"schema": []
+	}
+}
