@@ -1,0 +1,16 @@
+{
+	"name": "Finaltable",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "SQLDB",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [],
+		"typeProperties": {
+			"schema": "report",
+			"table": "finalresult"
+		}
+	}
+}

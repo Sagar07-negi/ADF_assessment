@@ -1,0 +1,126 @@
+{
+	"name": "cleaned_datasets",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "Customertable",
+						"type": "DatasetReference"
+					},
+					"name": "source1"
+				},
+				{
+					"dataset": {
+						"referenceName": "Ordertable",
+						"type": "DatasetReference"
+					},
+					"name": "source2"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "cleaned_customer",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				},
+				{
+					"dataset": {
+						"referenceName": "cleaned_order",
+						"type": "DatasetReference"
+					},
+					"name": "sink2"
+				}
+			],
+			"transformations": [
+				{
+					"name": "filter1"
+				},
+				{
+					"name": "filter2"
+				},
+				{
+					"name": "aggregate1"
+				},
+				{
+					"name": "aggregate2"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          CustomerID as string,",
+				"          FirstName as string,",
+				"          LastName as string,",
+				"          Email as string,",
+				"          PhoneNumber as string,",
+				"          Address as string,",
+				"          City as string,",
+				"          State as string,",
+				"          ZipCode as string,",
+				"          Country as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> source1",
+				"source(output(",
+				"          OrderID as string,",
+				"          ProductID as string,",
+				"          ProductName as string,",
+				"          Quantity as string,",
+				"          OrderTimestamp as string,",
+				"          Price as string,",
+				"          CustomerID as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> source2",
+				"source1 filter(CustomerID!=\"NULL\" && FirstName!=\"NULL\" && LastName !=\"NULL\" &&Email !=\"NULL\" && PhoneNumber!=\"NULL\" &&Address !=\"NULL\" &&City !=\"NULL\" && State!=\"NULL\" && ZipCode != \"NULL\" && Country != \"NULL\") ~> filter1",
+				"source2 filter(OrderID!=\"NULL\" && ProductID!=\"NULL\" && ProductName!=\"NULL\" && Quantity!=\"NULL\" && OrderTimestamp!=\"NULL\" && Price!=\"NULL\" &&CustomerID!=\"NULL\" ) ~> filter2",
+				"filter1 aggregate(groupBy(CustomerID,",
+				"          FirstName,",
+				"          LastName,",
+				"          Email,",
+				"          PhoneNumber,",
+				"          Address,",
+				"          City,",
+				"          State,",
+				"          ZipCode,",
+				"          Country),",
+				"     count = count(CustomerID)) ~> aggregate1",
+				"filter2 aggregate(groupBy(OrderID,",
+				"          ProductID,",
+				"          ProductName,",
+				"          Quantity,",
+				"          OrderTimestamp,",
+				"          Price,",
+				"          CustomerID),",
+				"     count = count(OrderID)) ~> aggregate2",
+				"aggregate1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError') ~> sink1",
+				"aggregate2 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError') ~> sink2"
+			]
+		}
+	}
+}

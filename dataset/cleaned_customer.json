@@ -1,0 +1,16 @@
+{
+	"name": "cleaned_customer",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "SQLDB",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [],
+		"typeProperties": {
+			"schema": "cleaned",
+			"table": "customer"
+		}
+	}
+}

@@ -1,0 +1,23 @@
+{
+	"name": "superstoredata",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_Merge",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": "240826 Superstore.csv",
+				"container": "superstore"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": []
+	}
+}

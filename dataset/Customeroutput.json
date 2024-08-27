@@ -1,0 +1,24 @@
+{
+	"name": "Customeroutput",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_Merge",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": "Customer.csv",
+				"folderPath": "Customer",
+				"container": "consolidated-data"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": []
+	}
+}
