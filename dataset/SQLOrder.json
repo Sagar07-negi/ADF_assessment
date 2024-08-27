@@ -1,0 +1,17 @@
+{
+	"name": "SQLOrder",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "SQLDB",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [],
+		"typeProperties": {
+			"schema": "raw",
+			"table": "Order"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

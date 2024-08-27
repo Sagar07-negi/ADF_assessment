@@ -1,0 +1,9 @@
+{
+	"name": "jmd324",
+	"location": "eastus",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "675ea58f-a8f3-4c54-b8a8-87594a27db1a",
+		"tenantId": "2800c0a0-70e9-49be-8733-faeaa6aced99"
+	}
+}
