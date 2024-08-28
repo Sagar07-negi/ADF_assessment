@@ -1,0 +1,23 @@
+{
+	"name": "fullstackdata",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_Merge",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": "events.csv",
+				"container": "fullstack"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": []
+	}
+}

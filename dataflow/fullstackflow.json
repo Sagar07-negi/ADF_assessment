@@ -1,0 +1,101 @@
+{
+	"name": "fullstackflow",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "fullstackdata",
+						"type": "DatasetReference"
+					},
+					"name": "source1"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "datafullstack",
+						"type": "DatasetReference"
+					},
+					"name": "fullstackoutput"
+				}
+			],
+			"transformations": [
+				{
+					"name": "updatetype"
+				},
+				{
+					"name": "updatenooftickets"
+				},
+				{
+					"name": "updateprice"
+				},
+				{
+					"name": "addeddurationcolumn"
+				},
+				{
+					"name": "sortbyid"
+				},
+				{
+					"name": "select1"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          id as short,",
+				"          title as string,",
+				"          type as string,",
+				"          address as string,",
+				"          date as string,",
+				"          entryTime as string,",
+				"          exitTime as string,",
+				"          nooftickets as short,",
+				"          price as short,",
+				"          description as string,",
+				"          organizedBy as string,",
+				"          location as string,",
+				"          imageUrl as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> source1",
+				"source1 derive(type = iif(isNull(type), 'concert', type)\r",
+				") ~> updatetype",
+				"updatetype derive(nooftickets = coalesce(nooftickets, 500)\r",
+				") ~> updatenooftickets",
+				"updatenooftickets derive(price = coalesce(price, 1500)\r",
+				") ~> updateprice",
+				"updateprice derive(duration = concat(toString(entryTime), ' - ', toString(exitTime))\r",
+				") ~> addeddurationcolumn",
+				"addeddurationcolumn sort(asc(id, true)) ~> sortbyid",
+				"sortbyid select(mapColumn(",
+				"          id,",
+				"          title,",
+				"          type,",
+				"          address,",
+				"          date,",
+				"          nooftickets,",
+				"          price,",
+				"          description,",
+				"          organizedBy,",
+				"          location,",
+				"          imageUrl,",
+				"          duration",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select1",
+				"select1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError') ~> fullstackoutput"
+			]
+		}
+	}
+}
