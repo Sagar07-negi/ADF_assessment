@@ -24,20 +24,14 @@
 						"type": "DatasetReference"
 					},
 					"name": "source3"
-				},
-				{
-					"dataset": {
-						"referenceName": "orderdb",
-						"type": "DatasetReference"
-					},
-					"name": "source4"
-				},
-				{
-					"name": "source5"
 				}
 			],
 			"sinks": [
 				{
+					"dataset": {
+						"referenceName": "fullstackevent",
+						"type": "DatasetReference"
+					},
 					"name": "fullstackoutput"
 				},
 				{
@@ -73,9 +67,6 @@
 				},
 				{
 					"name": "select1"
-				},
-				{
-					"name": "join1"
 				}
 			],
 			"scriptLines": [
@@ -130,24 +121,6 @@
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     ignoreNoFilesFound: false) ~> source3",
-				"source(output(",
-				"          id as string,",
-				"          EventId as short,",
-				"          UserId as string,",
-				"          numberoftickets as short,",
-				"          totalprice as integer,",
-				"          eventTitle as string,",
-				"          username as string,",
-				"          eventImage as string,",
-				"          date as string,",
-				"          venue as string",
-				"     ),",
-				"     allowSchemaDrift: true,",
-				"     validateSchema: false,",
-				"     isolationLevel: 'READ_UNCOMMITTED',",
-				"     format: 'table') ~> source4",
-				"source(allowSchemaDrift: true,",
-				"     validateSchema: false) ~> source5",
 				"source1 derive(type = iif(isNull(type), 'concert', type)) ~> updatetype",
 				"updatetype derive(nooftickets = coalesce(nooftickets, 500)) ~> updatenooftickets",
 				"updatenooftickets derive(price = coalesce(price, 1500)) ~> updateprice",
@@ -169,15 +142,16 @@
 				"     ),",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true) ~> select1",
-				"source4 join(joinType:'inner',",
-				"     matchType:'exact',",
-				"     ignoreSpaces: false,",
-				"     broadcast: 'auto')~> join1",
 				"select1 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true,",
-				"     format: 'table') ~> fullstackoutput",
+				"     errorHandlingOption: 'stopOnFirstError') ~> fullstackoutput",
 				"source2 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     deletable:false,",
