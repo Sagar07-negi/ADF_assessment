@@ -7,7 +7,51 @@
 		},
 		"annotations": [],
 		"type": "AzureSqlTable",
-		"schema": [],
+		"schema": [
+			{
+				"name": "id",
+				"type": "nvarchar"
+			},
+			{
+				"name": "EventId",
+				"type": "smallint",
+				"precision": 5
+			},
+			{
+				"name": "UserId",
+				"type": "nvarchar"
+			},
+			{
+				"name": "numberoftickets",
+				"type": "smallint",
+				"precision": 5
+			},
+			{
+				"name": "totalprice",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "eventTitle",
+				"type": "nvarchar"
+			},
+			{
+				"name": "username",
+				"type": "nvarchar"
+			},
+			{
+				"name": "eventImage",
+				"type": "nvarchar"
+			},
+			{
+				"name": "date",
+				"type": "nvarchar"
+			},
+			{
+				"name": "venue",
+				"type": "nvarchar"
+			}
+		],
 		"typeProperties": {
 			"schema": "raw",
 			"table": "weborder"
