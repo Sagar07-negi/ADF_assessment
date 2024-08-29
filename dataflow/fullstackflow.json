@@ -61,6 +61,13 @@
 						"type": "DatasetReference"
 					},
 					"name": "ordersql"
+				},
+				{
+					"dataset": {
+						"referenceName": "webdetails",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
 				}
 			],
 			"transformations": [
@@ -84,6 +91,9 @@
 				},
 				{
 					"name": "join1"
+				},
+				{
+					"name": "select2"
 				}
 			],
 			"scriptLines": [
@@ -138,15 +148,29 @@
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     ignoreNoFilesFound: false) ~> source3",
-				"source(allowSchemaDrift: true,",
+				"source(output(",
+				"          id as short,",
+				"          title as string,",
+				"          type as string,",
+				"          address as string,",
+				"          date as string,",
+				"          nooftickets as integer,",
+				"          price as integer,",
+				"          description as string,",
+				"          organizedBy as string,",
+				"          location as string,",
+				"          imageUrl as string,",
+				"          duration as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     isolationLevel: 'READ_UNCOMMITTED',",
 				"     format: 'table') ~> source4",
 				"source(output(",
 				"          id as string,",
-				"          EventId as integer,",
+				"          EventId as short,",
 				"          UserId as string,",
-				"          numberoftickets as integer,",
+				"          numberoftickets as short,",
 				"          totalprice as integer,",
 				"          eventTitle as string,",
 				"          username as string,",
@@ -179,10 +203,34 @@
 				"     ),",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true) ~> select1",
-				"source4 join(joinType:'inner',",
+				"source4, source5 join(source4@id == EventId,",
+				"     joinType:'inner',",
 				"     matchType:'exact',",
 				"     ignoreSpaces: false,",
 				"     broadcast: 'auto')~> join1",
+				"join1 select(mapColumn(",
+				"          id = source5@id,",
+				"          event_id = source4@id,",
+				"          event_name = title,",
+				"          event_type = type,",
+				"          event_address = address,",
+				"          total_tickets = nooftickets,",
+				"          price_per_ticket = price,",
+				"          event_description = description,",
+				"          organizedBy,",
+				"          event_location = location,",
+				"          imageUrl,",
+				"          duration,",
+				"          UserId,",
+				"          tickets_buyed = numberoftickets,",
+				"          total_price = totalprice,",
+				"          username,",
+				"          eventImage,",
+				"          event_date = source5@date,",
+				"          event_venue = venue",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select2",
 				"select1 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     deletable:false,",
@@ -224,7 +272,17 @@
 				"     format: 'table',",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true,",
-				"     errorHandlingOption: 'stopOnFirstError') ~> ordersql"
+				"     errorHandlingOption: 'stopOnFirstError') ~> ordersql",
+				"select2 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError') ~> sink1"
 			]
 		}
 	}
