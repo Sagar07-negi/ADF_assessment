@@ -1,5 +1,5 @@
 {
-	"name": "misumiflow",
+	"name": "DF_misumi",
 	"properties": {
 		"type": "MappingDataFlow",
 		"typeProperties": {
@@ -9,16 +9,22 @@
 						"referenceName": "misumidb",
 						"type": "DatasetReference"
 					},
-					"name": "source1"
+					"name": "misumisource"
 				}
 			],
 			"sinks": [],
 			"transformations": [
 				{
-					"name": "derivedColumn1"
+					"name": "updatingnull"
+				},
+				{
+					"name": "aggregatebydepartmentcode"
 				},
 				{
 					"name": "aggregate1"
+				},
+				{
+					"name": "filter1"
 				}
 			],
 			"scriptLines": [
@@ -43,14 +49,19 @@
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     isolationLevel: 'READ_UNCOMMITTED',",
-				"     format: 'table') ~> source1",
-				"source1 derive({Min Price} = coalesce({Min Price},\"63\"),",
+				"     format: 'table') ~> misumisource",
+				"misumisource derive({Min Price} = coalesce({Min Price},\"63\"),",
 				"          {Max Price} = coalesce({Max Price},\"34000\"),",
 				"          {Min Price Per Piece} = coalesce({Min Price Per Piece},\"64\"),",
-				"          {Max Price Per Piece} = coalesce({Max Price Per Piece},\"34000\")) ~> derivedColumn1",
-				"source1 aggregate(groupBy({Department Code}),",
-				"     {Min Price} = avg(toInteger({Min Price}))\r",
-				") ~> aggregate1"
+				"          {Max Price Per Piece} = coalesce({Max Price Per Piece},\"34000\")) ~> updatingnull",
+				"misumisource aggregate(groupBy({Department Code}),",
+				"     {Min Price} = avg(toInteger({Min Price}))) ~> aggregatebydepartmentcode",
+				"misumisource aggregate(groupBy({Brand Name}),",
+				"     {Min Price Per Piece} = avg(toInteger({Min Price Per Piece})),",
+				"          {Max Price Per Piece} = avg(toInteger({Max Price Per Piece}))) ~> aggregate1",
+				"aggregate1 filter(!isNull({Min Price Per Piece})\r",
+				"||\r",
+				"!isNull({Max Price Per Piece})) ~> filter1"
 			]
 		}
 	}

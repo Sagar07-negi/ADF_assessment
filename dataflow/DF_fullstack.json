@@ -9,35 +9,35 @@
 						"referenceName": "fullstackdata",
 						"type": "DatasetReference"
 					},
-					"name": "source1"
+					"name": "eventsource"
 				},
 				{
 					"dataset": {
 						"referenceName": "fullstackdata",
 						"type": "DatasetReference"
 					},
-					"name": "source2"
+					"name": "raweventsource"
 				},
 				{
 					"dataset": {
 						"referenceName": "weborderdata",
 						"type": "DatasetReference"
 					},
-					"name": "source3"
+					"name": "rawordersource"
 				},
 				{
 					"dataset": {
 						"referenceName": "fullstackevent",
 						"type": "DatasetReference"
 					},
-					"name": "source4"
+					"name": "cleanedeventsource"
 				},
 				{
 					"dataset": {
 						"referenceName": "orderdb",
 						"type": "DatasetReference"
 					},
-					"name": "source5"
+					"name": "cleanedordersource"
 				}
 			],
 			"sinks": [
@@ -67,7 +67,7 @@
 						"referenceName": "webdetails",
 						"type": "DatasetReference"
 					},
-					"name": "sink1"
+					"name": "fullstacksink"
 				}
 			],
 			"transformations": [
@@ -90,10 +90,10 @@
 					"name": "select1"
 				},
 				{
-					"name": "join1"
+					"name": "cleanedeventorderjoin"
 				},
 				{
-					"name": "select2"
+					"name": "selectcol"
 				}
 			],
 			"scriptLines": [
@@ -114,7 +114,7 @@
 				"     ),",
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
-				"     ignoreNoFilesFound: false) ~> source1",
+				"     ignoreNoFilesFound: false) ~> eventsource",
 				"source(output(",
 				"          id as short,",
 				"          title as string,",
@@ -132,7 +132,7 @@
 				"     ),",
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
-				"     ignoreNoFilesFound: false) ~> source2",
+				"     ignoreNoFilesFound: false) ~> raweventsource",
 				"source(output(",
 				"          id as string,",
 				"          EventId as short,",
@@ -147,7 +147,7 @@
 				"     ),",
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
-				"     ignoreNoFilesFound: false) ~> source3",
+				"     ignoreNoFilesFound: false) ~> rawordersource",
 				"source(output(",
 				"          id as short,",
 				"          title as string,",
@@ -165,7 +165,7 @@
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     isolationLevel: 'READ_UNCOMMITTED',",
-				"     format: 'table') ~> source4",
+				"     format: 'table') ~> cleanedeventsource",
 				"source(output(",
 				"          id as string,",
 				"          EventId as short,",
@@ -181,8 +181,8 @@
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     isolationLevel: 'READ_UNCOMMITTED',",
-				"     format: 'table') ~> source5",
-				"source1 derive(type = iif(isNull(type), 'concert', type)) ~> updatetype",
+				"     format: 'table') ~> cleanedordersource",
+				"eventsource derive(type = iif(isNull(type), 'concert', type)) ~> updatetype",
 				"updatetype derive(nooftickets = coalesce(nooftickets, 500)) ~> updatenooftickets",
 				"updatenooftickets derive(price = coalesce(price, 1500)) ~> updateprice",
 				"updateprice derive(duration = concat(toString(entryTime), ' - ', toString(exitTime))) ~> addeddurationcolumn",
@@ -203,14 +203,14 @@
 				"     ),",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true) ~> select1",
-				"source4, source5 join(source4@id == EventId,",
+				"cleanedeventsource, cleanedordersource join(cleanedeventsource@id == EventId,",
 				"     joinType:'inner',",
 				"     matchType:'exact',",
 				"     ignoreSpaces: false,",
-				"     broadcast: 'auto')~> join1",
-				"join1 select(mapColumn(",
-				"          id = source5@id,",
-				"          event_id = source4@id,",
+				"     broadcast: 'auto')~> cleanedeventorderjoin",
+				"cleanedeventorderjoin select(mapColumn(",
+				"          id = cleanedordersource@id,",
+				"          event_id = cleanedeventsource@id,",
 				"          event_name = title,",
 				"          event_type = type,",
 				"          event_address = address,",
@@ -226,11 +226,11 @@
 				"          total_price = totalprice,",
 				"          username,",
 				"          eventImage,",
-				"          event_date = source5@date,",
+				"          event_date = cleanedordersource@date,",
 				"          event_venue = venue",
 				"     ),",
 				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true) ~> select2",
+				"     skipDuplicateMapOutputs: true) ~> selectcol",
 				"select1 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     deletable:false,",
@@ -241,7 +241,7 @@
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true,",
 				"     errorHandlingOption: 'stopOnFirstError') ~> fullstackoutput",
-				"source2 sink(allowSchemaDrift: true,",
+				"raweventsource sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     deletable:false,",
 				"     insertable:true,",
@@ -251,7 +251,7 @@
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true,",
 				"     errorHandlingOption: 'stopOnFirstError') ~> webevent",
-				"source3 sink(allowSchemaDrift: true,",
+				"rawordersource sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     input(",
 				"          id as string,",
@@ -273,7 +273,7 @@
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true,",
 				"     errorHandlingOption: 'stopOnFirstError') ~> ordersql",
-				"select2 sink(allowSchemaDrift: true,",
+				"selectcol sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     deletable:false,",
 				"     insertable:true,",
@@ -282,7 +282,7 @@
 				"     format: 'table',",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true,",
-				"     errorHandlingOption: 'stopOnFirstError') ~> sink1"
+				"     errorHandlingOption: 'stopOnFirstError') ~> fullstacksink"
 			]
 		}
 	}

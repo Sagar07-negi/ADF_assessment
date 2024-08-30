@@ -9,14 +9,14 @@
 						"referenceName": "Customertable",
 						"type": "DatasetReference"
 					},
-					"name": "source1"
+					"name": "customersource"
 				},
 				{
 					"dataset": {
 						"referenceName": "Ordertable",
 						"type": "DatasetReference"
 					},
-					"name": "source2"
+					"name": "ordersource"
 				}
 			],
 			"sinks": [
@@ -25,28 +25,28 @@
 						"referenceName": "cleaned_customer",
 						"type": "DatasetReference"
 					},
-					"name": "sink1"
+					"name": "customersink"
 				},
 				{
 					"dataset": {
 						"referenceName": "cleaned_order",
 						"type": "DatasetReference"
 					},
-					"name": "sink2"
+					"name": "ordersink"
 				}
 			],
 			"transformations": [
 				{
-					"name": "filter1"
+					"name": "filteringnull"
 				},
 				{
-					"name": "filter2"
+					"name": "filternull"
 				},
 				{
-					"name": "aggregate1"
+					"name": "aggregatecol1"
 				},
 				{
-					"name": "aggregate2"
+					"name": "aggregatecol2"
 				}
 			],
 			"scriptLines": [
@@ -65,7 +65,7 @@
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     isolationLevel: 'READ_UNCOMMITTED',",
-				"     format: 'table') ~> source1",
+				"     format: 'table') ~> customersource",
 				"source(output(",
 				"          OrderID as string,",
 				"          ProductID as string,",
@@ -78,10 +78,10 @@
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     isolationLevel: 'READ_UNCOMMITTED',",
-				"     format: 'table') ~> source2",
-				"source1 filter(CustomerID!=\"NULL\" && FirstName!=\"NULL\" && LastName !=\"NULL\" &&Email !=\"NULL\" && PhoneNumber!=\"NULL\" &&Address !=\"NULL\" &&City !=\"NULL\" && State!=\"NULL\" && ZipCode != \"NULL\" && Country != \"NULL\") ~> filter1",
-				"source2 filter(OrderID!=\"NULL\" && ProductID!=\"NULL\" && ProductName!=\"NULL\" && Quantity!=\"NULL\" && OrderTimestamp!=\"NULL\" && Price!=\"NULL\" &&CustomerID!=\"NULL\") ~> filter2",
-				"filter1 aggregate(groupBy(CustomerID,",
+				"     format: 'table') ~> ordersource",
+				"customersource filter(CustomerID!=\"NULL\" && FirstName!=\"NULL\" && LastName !=\"NULL\" &&Email !=\"NULL\" && PhoneNumber!=\"NULL\" &&Address !=\"NULL\" &&City !=\"NULL\" && State!=\"NULL\" && ZipCode != \"NULL\" && Country != \"NULL\") ~> filteringnull",
+				"ordersource filter(OrderID!=\"NULL\" && ProductID!=\"NULL\" && ProductName!=\"NULL\" && Quantity!=\"NULL\" && OrderTimestamp!=\"NULL\" && Price!=\"NULL\" &&CustomerID!=\"NULL\") ~> filternull",
+				"filteringnull aggregate(groupBy(CustomerID,",
 				"          FirstName,",
 				"          LastName,",
 				"          Email,",
@@ -91,16 +91,16 @@
 				"          State,",
 				"          ZipCode,",
 				"          Country),",
-				"     count = count(CustomerID)) ~> aggregate1",
-				"filter2 aggregate(groupBy(OrderID,",
+				"     count = count(CustomerID)) ~> aggregatecol1",
+				"filternull aggregate(groupBy(OrderID,",
 				"          ProductID,",
 				"          ProductName,",
 				"          Quantity,",
 				"          OrderTimestamp,",
 				"          Price,",
 				"          CustomerID),",
-				"     count = count(OrderID)) ~> aggregate2",
-				"aggregate1 sink(allowSchemaDrift: true,",
+				"     count = count(OrderID)) ~> aggregatecol2",
+				"aggregatecol1 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     deletable:false,",
 				"     insertable:true,",
@@ -109,8 +109,8 @@
 				"     format: 'table',",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true,",
-				"     errorHandlingOption: 'stopOnFirstError') ~> sink1",
-				"aggregate2 sink(allowSchemaDrift: true,",
+				"     errorHandlingOption: 'stopOnFirstError') ~> customersink",
+				"aggregatecol2 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     deletable:false,",
 				"     insertable:true,",
@@ -119,7 +119,7 @@
 				"     format: 'table',",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true,",
-				"     errorHandlingOption: 'stopOnFirstError') ~> sink2"
+				"     errorHandlingOption: 'stopOnFirstError') ~> ordersink"
 			]
 		}
 	}

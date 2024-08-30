@@ -9,14 +9,14 @@
 						"referenceName": "cleaned_customer",
 						"type": "DatasetReference"
 					},
-					"name": "source1"
+					"name": "cleanedcustomersource"
 				},
 				{
 					"dataset": {
 						"referenceName": "cleaned_order",
 						"type": "DatasetReference"
 					},
-					"name": "source2"
+					"name": "cleanedordersource"
 				}
 			],
 			"sinks": [
@@ -25,21 +25,21 @@
 						"referenceName": "Finaltable",
 						"type": "DatasetReference"
 					},
-					"name": "sink1"
+					"name": "finaltablesink"
 				}
 			],
 			"transformations": [
 				{
-					"name": "join1"
+					"name": "customerjoinorder"
 				},
 				{
-					"name": "filter1"
+					"name": "filterrows"
 				},
 				{
-					"name": "select1"
+					"name": "selectcol"
 				},
 				{
-					"name": "aggregate1"
+					"name": "aggregatecol"
 				}
 			],
 			"scriptLines": [
@@ -58,7 +58,7 @@
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     isolationLevel: 'READ_UNCOMMITTED',",
-				"     format: 'table') ~> source1",
+				"     format: 'table') ~> cleanedcustomersource",
 				"source(output(",
 				"          OrderID as string,",
 				"          ProductID as string,",
@@ -71,15 +71,15 @@
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     isolationLevel: 'READ_UNCOMMITTED',",
-				"     format: 'table') ~> source2",
-				"source1, source2 join(source1@CustomerID == source2@CustomerID,",
+				"     format: 'table') ~> cleanedordersource",
+				"cleanedcustomersource, cleanedordersource join(cleanedcustomersource@CustomerID == cleanedordersource@CustomerID,",
 				"     joinType:'inner',",
 				"     matchType:'exact',",
 				"     ignoreSpaces: false,",
-				"     broadcast: 'auto')~> join1",
-				"join1 filter(source2@CustomerID!=\"NULL\") ~> filter1",
-				"filter1 select(mapColumn(",
-				"          CustomerID = source1@CustomerID,",
+				"     broadcast: 'auto')~> customerjoinorder",
+				"customerjoinorder filter(cleanedordersource@CustomerID!=\"NULL\") ~> filterrows",
+				"filterrows select(mapColumn(",
+				"          CustomerID = cleanedcustomersource@CustomerID,",
 				"          FirstName,",
 				"          LastName,",
 				"          Email,",
@@ -95,13 +95,13 @@
 				"          Quantity,",
 				"          OrderTimestamp,",
 				"          Price,",
-				"          CustomerID = source2@CustomerID",
+				"          CustomerID = cleanedordersource@CustomerID",
 				"     ),",
 				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true) ~> select1",
-				"select1 aggregate(groupBy(CustomerID),",
-				"     count = count(CustomerID)) ~> aggregate1",
-				"aggregate1 sink(allowSchemaDrift: true,",
+				"     skipDuplicateMapOutputs: true) ~> selectcol",
+				"selectcol aggregate(groupBy(CustomerID),",
+				"     count = count(CustomerID)) ~> aggregatecol",
+				"aggregatecol sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     deletable:false,",
 				"     insertable:true,",
@@ -110,7 +110,7 @@
 				"     format: 'table',",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true,",
-				"     errorHandlingOption: 'stopOnFirstError') ~> sink1"
+				"     errorHandlingOption: 'stopOnFirstError') ~> finaltablesink"
 			]
 		}
 	}

@@ -9,7 +9,7 @@
 						"referenceName": "superstoresdata",
 						"type": "DatasetReference"
 					},
-					"name": "source1"
+					"name": "superstoresource"
 				}
 			],
 			"sinks": [
@@ -18,22 +18,22 @@
 						"referenceName": "AzureSqlTable1",
 						"type": "DatasetReference"
 					},
-					"name": "sink1"
+					"name": "cleansuperstore1sink"
 				},
 				{
 					"dataset": {
 						"referenceName": "AzureSqlTable2",
 						"type": "DatasetReference"
 					},
-					"name": "sink2"
+					"name": "cleansuperstore2sink"
 				}
 			],
 			"transformations": [
 				{
-					"name": "select1"
+					"name": "selectcol2"
 				},
 				{
-					"name": "select2"
+					"name": "selectcol1"
 				}
 			],
 			"scriptLines": [
@@ -62,8 +62,8 @@
 				"     ),",
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
-				"     ignoreNoFilesFound: false) ~> source1",
-				"source1 select(mapColumn(",
+				"     ignoreNoFilesFound: false) ~> superstoresource",
+				"superstoresource select(mapColumn(",
 				"          {Row ID},",
 				"          {Order ID},",
 				"          {Order Date},",
@@ -87,8 +87,8 @@
 				"          Profit",
 				"     ),",
 				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true) ~> select1",
-				"source1 select(mapColumn(",
+				"     skipDuplicateMapOutputs: true) ~> selectcol2",
+				"superstoresource select(mapColumn(",
 				"          {Row ID},",
 				"          {Order ID},",
 				"          {Order Date},",
@@ -112,8 +112,8 @@
 				"          Profit",
 				"     ),",
 				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true) ~> select2",
-				"select2 sink(allowSchemaDrift: true,",
+				"     skipDuplicateMapOutputs: true) ~> selectcol1",
+				"selectcol1 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     deletable:false,",
 				"     insertable:true,",
@@ -122,8 +122,8 @@
 				"     format: 'table',",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true,",
-				"     errorHandlingOption: 'stopOnFirstError') ~> sink1",
-				"select1 sink(allowSchemaDrift: true,",
+				"     errorHandlingOption: 'stopOnFirstError') ~> cleansuperstore1sink",
+				"selectcol2 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     deletable:false,",
 				"     insertable:true,",
@@ -132,7 +132,7 @@
 				"     format: 'table',",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true,",
-				"     errorHandlingOption: 'stopOnFirstError') ~> sink2"
+				"     errorHandlingOption: 'stopOnFirstError') ~> cleansuperstore2sink"
 			]
 		}
 	}
