@@ -1,5 +1,5 @@
 {
-	"name": "fullstackflow",
+	"name": "DF_fullstack",
 	"properties": {
 		"type": "MappingDataFlow",
 		"typeProperties": {

@@ -1,5 +1,5 @@
 {
-	"name": "superstore",
+	"name": "PL_superstore",
 	"properties": {
 		"activities": [
 			{
@@ -16,7 +16,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"dataflow": {
-						"referenceName": "superstoreflow",
+						"referenceName": "DF_superstore",
 						"type": "DataFlowReference"
 					},
 					"compute": {

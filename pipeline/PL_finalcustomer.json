@@ -1,5 +1,5 @@
 {
-	"name": "pipeline2",
+	"name": "PL_finalcustomer",
 	"properties": {
 		"activities": [
 			{
@@ -16,7 +16,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"dataflow": {
-						"referenceName": "customerwithorder",
+						"referenceName": "DF_customerwithorder",
 						"type": "DataFlowReference"
 					},
 					"compute": {

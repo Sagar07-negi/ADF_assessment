@@ -1,5 +1,5 @@
 {
-	"name": "fullstackpipeline",
+	"name": "PL_fullstack",
 	"properties": {
 		"activities": [
 			{
@@ -16,7 +16,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"dataflow": {
-						"referenceName": "fullstackflow",
+						"referenceName": "DF_fullstack",
 						"type": "DataFlowReference"
 					},
 					"compute": {
