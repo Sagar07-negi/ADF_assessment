@@ -24,7 +24,10 @@
 					"name": "aggregate1"
 				},
 				{
-					"name": "filter1"
+					"name": "filternull1"
+				},
+				{
+					"name": "filternull2"
 				}
 			],
 			"scriptLines": [
@@ -61,7 +64,8 @@
 				"          {Max Price Per Piece} = avg(toInteger({Max Price Per Piece}))) ~> aggregate1",
 				"aggregate1 filter(!isNull({Min Price Per Piece})\r",
 				"||\r",
-				"!isNull({Max Price Per Piece})) ~> filter1"
+				"!isNull({Max Price Per Piece})) ~> filternull1",
+				"aggregatebydepartmentcode filter({Department Code}!=\"mold\") ~> filternull2"
 			]
 		}
 	}
