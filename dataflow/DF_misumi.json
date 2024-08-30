@@ -18,16 +18,10 @@
 					"name": "updatingnull"
 				},
 				{
-					"name": "aggregatebydepartmentcode"
+					"name": "aggregate2"
 				},
 				{
-					"name": "aggregate1"
-				},
-				{
-					"name": "filternull1"
-				},
-				{
-					"name": "filternull2"
+					"name": "aggregate3"
 				}
 			],
 			"scriptLines": [
@@ -57,15 +51,11 @@
 				"          {Max Price} = coalesce({Max Price},\"34000\"),",
 				"          {Min Price Per Piece} = coalesce({Min Price Per Piece},\"64\"),",
 				"          {Max Price Per Piece} = coalesce({Max Price Per Piece},\"34000\")) ~> updatingnull",
-				"misumisource aggregate(groupBy({Department Code}),",
-				"     {Min Price} = avg(toInteger({Min Price}))) ~> aggregatebydepartmentcode",
-				"misumisource aggregate(groupBy({Brand Name}),",
+				"updatingnull aggregate(groupBy({Department Code}),",
+				"     {Min Price} = avg(toInteger({Min Price}))) ~> aggregate2",
+				"updatingnull aggregate(groupBy({Brand Name}),",
 				"     {Min Price Per Piece} = avg(toInteger({Min Price Per Piece})),",
-				"          {Max Price Per Piece} = avg(toInteger({Max Price Per Piece}))) ~> aggregate1",
-				"aggregate1 filter(!isNull({Min Price Per Piece})\r",
-				"||\r",
-				"!isNull({Max Price Per Piece})) ~> filternull1",
-				"aggregatebydepartmentcode filter({Department Code}!=\"mold\") ~> filternull2"
+				"          {Max Price Per Piece} = avg(toInteger({Max Price Per Piece}))) ~> aggregate3"
 			]
 		}
 	}
