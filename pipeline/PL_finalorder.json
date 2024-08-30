@@ -3,7 +3,7 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "cleaned_data",
+				"name": "DF_cleaned_datasets",
 				"type": "ExecuteDataFlow",
 				"dependsOn": [],
 				"policy": {

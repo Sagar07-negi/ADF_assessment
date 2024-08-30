@@ -1,9 +1,9 @@
 {
-	"name": "BlobtoSQLPipeline",
+	"name": "PL_BlobtoSQL",
 	"properties": {
 		"activities": [
 			{
-				"name": "Copy data1",
+				"name": "CD_customer",
 				"type": "Copy",
 				"dependsOn": [],
 				"policy": {
@@ -63,7 +63,7 @@
 				]
 			},
 			{
-				"name": "Copy data2",
+				"name": "CD_order",
 				"type": "Copy",
 				"dependsOn": [],
 				"policy": {
@@ -120,7 +120,7 @@
 				]
 			},
 			{
-				"name": "Copy data3",
+				"name": "CD_customeroutput",
 				"type": "Copy",
 				"dependsOn": [],
 				"policy": {
@@ -174,7 +174,7 @@
 				]
 			},
 			{
-				"name": "Copy data4",
+				"name": "CD_orderoutput",
 				"type": "Copy",
 				"dependsOn": [],
 				"policy": {
