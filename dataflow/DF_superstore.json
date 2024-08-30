@@ -14,17 +14,9 @@
 			],
 			"sinks": [
 				{
-					"dataset": {
-						"referenceName": "AzureSqlTable1",
-						"type": "DatasetReference"
-					},
 					"name": "cleansuperstore1sink"
 				},
 				{
-					"dataset": {
-						"referenceName": "AzureSqlTable2",
-						"type": "DatasetReference"
-					},
 					"name": "cleansuperstore2sink"
 				}
 			],
@@ -115,24 +107,14 @@
 				"     skipDuplicateMapOutputs: true) ~> selectcol1",
 				"selectcol1 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
-				"     deletable:false,",
-				"     insertable:true,",
-				"     updateable:false,",
-				"     upsertable:false,",
-				"     format: 'table',",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true,",
-				"     errorHandlingOption: 'stopOnFirstError') ~> cleansuperstore1sink",
+				"     format: 'table') ~> cleansuperstore1sink",
 				"selectcol2 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
-				"     deletable:false,",
-				"     insertable:true,",
-				"     updateable:false,",
-				"     upsertable:false,",
-				"     format: 'table',",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true,",
-				"     errorHandlingOption: 'stopOnFirstError') ~> cleansuperstore2sink"
+				"     format: 'table') ~> cleansuperstore2sink"
 			]
 		}
 	}
