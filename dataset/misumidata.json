@@ -1,0 +1,21 @@
+{
+	"name": "misumidata",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_Merge",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Excel",
+		"typeProperties": {
+			"sheetName": "misumi_data",
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": "misumi_data.xlsx",
+				"container": "misumi"
+			},
+			"firstRowAsHeader": true
+		},
+		"schema": []
+	}
+}

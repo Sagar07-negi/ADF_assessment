@@ -1,0 +1,57 @@
+{
+	"name": "misumiflow",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "misumidb",
+						"type": "DatasetReference"
+					},
+					"name": "source1"
+				}
+			],
+			"sinks": [],
+			"transformations": [
+				{
+					"name": "derivedColumn1"
+				},
+				{
+					"name": "aggregate1"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          {Department Code} as string,",
+				"          {Category Code} as string,",
+				"          {Category Name} as string,",
+				"          {Search Category Code} as string,",
+				"          {Series Code} as string,",
+				"          {Series Name} as string,",
+				"          {Brand Code} as string,",
+				"          {Brand URL Code} as string,",
+				"          {Brand Name} as string,",
+				"          {Series Status} as string,",
+				"          {Min Days to Ship} as string,",
+				"          {Max Days to Ship} as string,",
+				"          {Min Price} as string,",
+				"          {Max Price} as string,",
+				"          {Min Price Per Piece} as string,",
+				"          {Max Price Per Piece} as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> source1",
+				"source1 derive({Min Price} = coalesce({Min Price},\"63\"),",
+				"          {Max Price} = coalesce({Max Price},\"34000\"),",
+				"          {Min Price Per Piece} = coalesce({Min Price Per Piece},\"64\"),",
+				"          {Max Price Per Piece} = coalesce({Max Price Per Piece},\"34000\")) ~> derivedColumn1",
+				"source1 aggregate(groupBy({Department Code}),",
+				"     {Min Price} = avg(toInteger({Min Price}))\r",
+				") ~> aggregate1"
+			]
+		}
+	}
+}
